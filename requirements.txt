@@ -34,3 +34,4 @@ streamlit==1.4.0
 matplotlib
 plotly
 sklearn
+openpyxl
