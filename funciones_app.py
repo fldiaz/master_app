@@ -99,8 +99,13 @@ label_=clasificacion.loc[clasificacion.labels==labels_seleccion]
 label_.sort_values(by=['count'], ascending=False)
 st.dataframe(label_)
 
-
-
+# usuario selecciona categoria
+categoria=(xlibro['categoriapadre'].unique())
+categoria_seleccion = st.selectbox("Seleccionar similares por categoria", categoria)
+st.subheader(f"Libros que pertenecen a la misma categoria:  {categoria_seleccion}")
+label_=clasificacion.loc[clasificacion.labels==categoria_seleccion]
+label_.sort_values(by=['count'], ascending=False)
+st.dataframe(label_)
 
 
 #isbn = st.text_area("ISBN para analizar", height=100)
