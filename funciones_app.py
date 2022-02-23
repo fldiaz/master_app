@@ -76,7 +76,7 @@ st.title('Análisis de clustering por temas')
 clasificacion=load_data()
 sellos = (clasificacion['sello'].unique())
 # usuario selecciona sello
-sello_seleccion = st.selectbox("Seleccionar sello", sellos)
+sello_seleccion = st.selectbox("Seleccionar sello",sellos)
 st.subheader(f"Libros del sello seleccionado:  {sello_seleccion}")
 seleccion=clasificacion.loc[clasificacion.sello==sello_seleccion]
 # usuario selecciona titulo
@@ -104,9 +104,10 @@ categoria=(clasificacion['categoriapadre'].unique())
 categoria_seleccion = st.selectbox("Seleccionar similares por categoria", categoria)
 st.subheader(f"Libros que pertenecen a la misma categoria:  {categoria_seleccion}")
 categoria_=clasificacion.loc[clasificacion.categoriapadre==categoria_seleccion]
-categoria_=categoria_.groupby(['isbn13', 'titulo'], as_index = False).agg({'labels': ','.join})
-categoria_.sort_values(by=['titulo'], ascending=False)
-st.dataframe(categoria_)
+categoria_=categoria_.astype({'labels': 'str'})
+categoria_isbn=categoria_.groupby(['isbn13', 'titulo'], as_index = False).agg({'labels': ','.join, 'categoria': ','.join, 'sello': ','.join})
+categoria_isbn.sort_values(by=['titulo'], ascending=False)
+st.dataframe(categoria_isbn)
 
 
 #isbn = st.text_area("ISBN para analizar", height=100)
