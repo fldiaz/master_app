@@ -104,7 +104,8 @@ categoria=(clasificacion['categoriapadre'].unique())
 categoria_seleccion = st.selectbox("Seleccionar similares por categoria", categoria)
 st.subheader(f"Libros que pertenecen a la misma categoria:  {categoria_seleccion}")
 categoria_=clasificacion.loc[clasificacion.categoriapadre==categoria_seleccion]
-categoria_.sort_values(by=['count'], ascending=False)
+categoria_=categoria_.groupby(['isbn13', 'titulo'], as_index = False).agg({'labels': ','.join, 'count': 'sum','sello': 'last', 'categoria': 'last'})
+categoria_.sort_values(by=['titulo'], ascending=False)
 st.dataframe(categoria_)
 
 
