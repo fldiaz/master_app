@@ -57,7 +57,9 @@ def grafico(df):
 
 
 
-@st.cache(ttl=600) #Uses st.cache to only rerun when the query changes or after 10 min.
+# Create connection object.
+# `anon=False` means not anonymous, i.e. it uses access keys to pull data.
+fs = s3fs.S3FileSystem(anon=False)
 
 
 
@@ -67,14 +69,17 @@ def grafico(df):
 
 @st.cache
 def load_data():
-    bert_clustering=pd.read_excel('s3://datos-riverside/bert_clustering_20_5_con guion.xlsx')
+    with fs.open('s3://datos-riverside/bert_clustering_20_5_con guion.xlsx', mode="rb") as f:
+        bert_clustering=pd.read_excel(f)
     print(bert_clustering.info())
     df=palabras_principales(bert_clustering)
-    listados_all=pd.read_excel('s3://datos-riverside/listados_all.xlsx', index_col=0)
+    with fs.open('s3://datos-riverside/listados_all.xlsx', mode="rb") as f:
+        listados_all=pd.read_excel(f, index_col=0)
     listados_all=listados_all.drop_duplicates(keep='first')
     listados_all=listados_all.merge(df, left_on='list', right_on='listado')
     clasificacion=listados_all.groupby(['isbn13', 'word', 'labels','palabras_listado']).agg({'count': 'sum' }).sort_values(by='count', ascending=False).reset_index()
-    catalogo=pd.read_csv('s3://datos-riverside/catalogo_actualizado.csv', usecols={'ean', 'sello', 'categoriapadre',  'categoria', 'titulo'},dtype={'ean':'str'})
+    with fs.open('s3://datos-riverside/catalogo_actualizado.csv', mode="rb") as f:
+        catalogo=pd.read_csv(f, usecols={'ean', 'sello', 'categoriapadre',  'categoria', 'titulo'},dtype={'ean':'str'})
     listados_originales=listados_all.groupby(['isbn13'], as_index = False).agg({'list': ','.join })
     listados_originales.rename(columns={'list': 'listados_originales'}, inplace=True)
     clasificacion=clasificacion.merge(listados_originales, on='isbn13', how='left')
