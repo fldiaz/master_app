@@ -84,7 +84,28 @@ def load_data(file1, file2, file3):
 
 st.title('Análisis de clustering por temas')
 
-clasificacion=load_data('s3://datos-riverside/bert_clustering_20_5_con guion.xlsx','s3://datos-riverside/listados_all.xlsx','s3://datos-riverside/catalogo_actualizado.csv' )
+file1='s3://datos-riverside/bert_clustering_20_5_con guion.xlsx'
+file2='s3://datos-riverside/listados_all.xlsx'
+file3='s3://datos-riverside/catalogo_actualizado.csv'
+with fs.open(file1, mode="rb") as f:
+    bert_clustering=pd.read_excel(f)
+print(bert_clustering.info())
+df=palabras_principales(bert_clustering)
+with fs.open(file2, mode="rb") as f:
+    listados_all=pd.read_excel(f, index_col=0)
+listados_all=listados_all.drop_duplicates(keep='first')
+listados_all=listados_all.merge(df, left_on='list', right_on='listado')
+clasificacion=listados_all.groupby(['isbn13', 'word', 'labels','palabras_listado']).agg({'count': 'sum' }).sort_values(by='count', ascending=False).reset_index()
+with fs.open(file3, mode="rb") as f:
+    catalogo=pd.read_csv(f, usecols={'ean', 'sello', 'categoriapadre',  'categoria', 'titulo'},dtype={'ean':'str'})
+listados_originales=listados_all.groupby(['isbn13'], as_index = False).agg({'list': ','.join })
+listados_originales.rename(columns={'list': 'listados_originales'}, inplace=True)
+clasificacion=clasificacion.merge(listados_originales, on='isbn13', how='left')
+clasificacion=clasificacion.merge(catalogo, left_on='isbn13', right_on='ean')
+clasificacion.drop('ean', axis=1, inplace=True)
+
+
+#clasificacion=load_data(,,'' )
 sellos = (clasificacion['sello'].unique())
 # usuario selecciona sello
 sello_seleccion = st.selectbox("Seleccionar sello", sellos)
