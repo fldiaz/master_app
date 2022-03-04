@@ -12,7 +12,10 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 pd.options.display.max_rows = 999
 
-
+import s3fs
+import os
+import boto3
+import time
 
 
 
@@ -54,16 +57,24 @@ def grafico(df):
 
 
 
+@st.cache(ttl=600) #Uses st.cache to only rerun when the query changes or after 10 min.
+
+
+
+
+
+
+
 @st.cache
 def load_data():
-    bert_clustering=pd.read_excel('bert_clustering_20_5_con guion.xlsx')
+    bert_clustering=pd.read_excel('s3://datos-riverside/bert_clustering_20_5_con guion.xlsx')
     print(bert_clustering.info())
     df=palabras_principales(bert_clustering)
-    listados_all=pd.read_excel('listados_all.xlsx', index_col=0)
+    listados_all=pd.read_excel('s3://datos-riverside/listados_all.xlsx', index_col=0)
     listados_all=listados_all.drop_duplicates(keep='first')
     listados_all=listados_all.merge(df, left_on='list', right_on='listado')
-    clasificacion=listados_all.groupby(['isbn13', 'word', 'labels', 'titulo', 'palabras_listado']).agg({'count': 'sum' }).sort_values(by='count', ascending=False).reset_index()
-    catalogo=pd.read_csv('catalogo_actualizado.csv', usecols={'ean', 'sello', 'categoriapadre',  'categoria'},dtype={'ean':'str'}, sep=';')
+    clasificacion=listados_all.groupby(['isbn13', 'word', 'labels','palabras_listado']).agg({'count': 'sum' }).sort_values(by='count', ascending=False).reset_index()
+    catalogo=pd.read_csv('s3://datos-riverside/catalogo_actualizado.csv', usecols={'ean', 'sello', 'categoriapadre',  'categoria', 'titulo'},dtype={'ean':'str'})
     listados_originales=listados_all.groupby(['isbn13'], as_index = False).agg({'list': ','.join })
     listados_originales.rename(columns={'list': 'listados_originales'}, inplace=True)
     clasificacion=clasificacion.merge(listados_originales, on='isbn13', how='left')
