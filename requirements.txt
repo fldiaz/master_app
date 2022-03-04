@@ -35,3 +35,4 @@ matplotlib
 plotly
 sklearn
 openpyxl
+s3fs
