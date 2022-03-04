@@ -36,3 +36,4 @@ plotly
 sklearn
 openpyxl
 s3fs
+boto3
