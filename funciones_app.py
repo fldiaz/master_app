@@ -143,4 +143,28 @@ with col2:
     st.plotly_chart(barra_dimension(xlibro, 'publico_ojetivo', 'Público Objetivo'))
 
 #st.write(barh_variable(xlibro))
+xlibro.fillna('-', inplace=True)
 st.dataframe(xlibro)
+
+
+#---------------------------------------------------
+st.markdown('--------------------------------------')
+st.title('Análisis palabras y libros de un mismo cluster')
+file2='s3://datos-riverside/clusters.xlsx'
+file3='s3://datos-riverside/catalogo_actualizado.csv'
+file4='s3://datos-riverside/listados_all.xlsx'
+clusters=pd.read_excel(file2)
+#seleccion por clustering
+with fs.open(file3, mode="rb") as f:
+    catalogo=pd.read_csv(f, usecols={'ean', 'sello', 'categoriapadre',  'categoria', 'titulo'},dtype={'ean':'str'})
+with fs.open(file4, mode="rb") as f:
+    listados_all=pd.read_excel(f, index_col=0)
+clusters=listados_all.merge(clusters, left_on='list', right_on='listado')
+clusters=clusters.merge(catalogo, left_on='isbn13', right_on='ean')
+labels=(clusters['predicted_labels'].unique())
+labels_seleccion = st.selectbox("Seleccionar Cluster", labels)
+xlabels=clusters.loc[clusters.predicted_labels==labels_seleccion]
+xlabels=xlabels.sort_values(by='listado', ascending=False)
+xlabels.fillna('-', inplace=True)
+st.dataframe(xlabels[['listado', 'titulo_x', 'isbn13', 'count', 'popularidad', 'publico_ojetivo', 'tema_literatura',
+       'como_esta_escrito', 'donde_esta_escrito', 'cuando_esta_escrito']])
