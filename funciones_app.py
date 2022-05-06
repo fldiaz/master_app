@@ -153,12 +153,11 @@ st.title('Análisis palabras y libros de un mismo cluster')
 file2='s3://datos-riverside/clusters.xlsx'
 file3='s3://datos-riverside/catalogo_actualizado.csv'
 file4='s3://datos-riverside/listados_all.xlsx'
-clusters=pd.read_excel(file2)
+#clusters=pd.read_excel(file2)
+clusters=load_data(file2)
 #seleccion por clustering
-with fs.open(file3, mode="rb") as f:
-    catalogo=pd.read_csv(f, usecols={'ean', 'sello', 'categoriapadre',  'categoria', 'titulo'},dtype={'ean':'str'})
-with fs.open(file4, mode="rb") as f:
-    listados_all=pd.read_excel(f, index_col=0)
+catalogo=load_data(file3)
+listados_all=load_data(file4, index_col=0)
 clusters=listados_all.merge(clusters, left_on='list', right_on='listado')
 clusters=clusters.merge(catalogo, left_on='isbn13', right_on='ean')
 labels=(clusters['predicted_labels'].unique())
