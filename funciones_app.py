@@ -161,6 +161,7 @@ file4='s3://datos-riverside/listados_all.xlsx'
 clusters=load_data(file2)
 #seleccion por clustering
 catalogo=load_csv(file3)
+catalogo=catalogo.astype({'ean':'str'})
 listados_all=load_data(file4)
 clusters=listados_all.merge(clusters, left_on='list', right_on='listado')
 clusters=clusters.merge(catalogo, left_on='isbn13', right_on='ean')
