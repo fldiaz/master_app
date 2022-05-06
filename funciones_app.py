@@ -59,6 +59,10 @@ def load_data(file1):
         df=pd.read_excel(f)
         return df
 
+def load_csv(file):
+    with fs.open(file, mode="rb") as f:
+        df=pd.read_csv(f)
+        return df
 
 #-----------------------------------------------------------------------
 #APP
@@ -156,7 +160,7 @@ file4='s3://datos-riverside/listados_all.xlsx'
 #clusters=pd.read_excel(file2)
 clusters=load_data(file2)
 #seleccion por clustering
-catalogo=load_data(file3)
+catalogo=load_csv(file3)
 listados_all=load_data(file4, index_col=0)
 clusters=listados_all.merge(clusters, left_on='list', right_on='listado')
 clusters=clusters.merge(catalogo, left_on='isbn13', right_on='ean')
