@@ -56,12 +56,12 @@ file1='s3://datos-riverside/clasificacion_libros.xlsx'
 @st.cache
 def load_data(file1):
     with fs.open(file1, mode="rb") as f:
-        df=pd.read_excel(f)
+        df=pd.read_excel(f, index_col=0)
         return df
 
 def load_csv(file):
     with fs.open(file, mode="rb") as f:
-        df=pd.read_csv(f)
+        df=pd.read_csv(f, index_col=0)
         return df
 
 #-----------------------------------------------------------------------
@@ -161,7 +161,7 @@ file4='s3://datos-riverside/listados_all.xlsx'
 clusters=load_data(file2)
 #seleccion por clustering
 catalogo=load_csv(file3)
-listados_all=load_data(file4, index_col=0)
+listados_all=load_data(file4)
 clusters=listados_all.merge(clusters, left_on='list', right_on='listado')
 clusters=clusters.merge(catalogo, left_on='isbn13', right_on='ean')
 labels=(clusters['predicted_labels'].unique())
