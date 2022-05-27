@@ -52,13 +52,13 @@ def barra_dimension(df, y, title):
 # `anon=False` means not anonymous, i.e. it uses access keys to pull data.
 fs = s3fs.S3FileSystem(anon=False)
 
-file1='s3://datos-riverside/clasificacion_libros.xlsx'
 @st.cache
-def load_data(file1):
-    with fs.open(file1, mode="rb") as f:
+def load_data(filename):
+    with fs.open(filename, mode="rb") as f:
         df=pd.read_excel(f, index_col=0)
         return df
 
+@st.experimental_memo(ttl=600)
 def load_csv(file):
     with fs.open(file, mode="rb") as f:
         df=pd.read_csv(f, index_col=0)
@@ -73,7 +73,7 @@ container.markdown('## 📙 Análisis de los temas de los libros, según Goodrea
 
 #-------------------------------------------------------------------------------
 #DATOS
-
+file1='s3://datos-riverside/clasificacion_libros.xlsx'
 clasificacion=load_data(file1)
 # usuario selecciona titulo
 titulos=(clasificacion['titulo_x'].unique())
