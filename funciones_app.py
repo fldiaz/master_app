@@ -149,7 +149,12 @@ with col2:
 #st.write(barh_variable(xlibro))
 xlibro.fillna('-', inplace=True)
 st.dataframe(xlibro)
-
+#---------------------------------------------------
+st.markdown('--------------------------------------')
+st.title('Libros similares')
+libros_similares=pd.read_excel('similar_books.xlsx')
+similares_eleccion=libros_similares.loc[libros_similares.titulo==libro_seleccion]
+st.dataframe(similares_eleccion[['similar_books_titulo', 'similar_books_isbn13']])
 
 #---------------------------------------------------
 st.markdown('--------------------------------------')
