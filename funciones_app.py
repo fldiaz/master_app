@@ -73,7 +73,7 @@ container.markdown('## 📙 Análisis de los temas de los libros, según Goodrea
 
 #-------------------------------------------------------------------------------
 #DATOS
-file1='s3://datos-riverside/clasificacion_libros.xlsx'
+file1='s3://datos-riverside/clasificacion_libros_62022.xlsx'
 clasificacion=load_data(file1)
 # usuario selecciona titulo
 titulos=(clasificacion['titulo_x'].unique())
