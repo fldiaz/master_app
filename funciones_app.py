@@ -75,10 +75,11 @@ container.markdown('## 📙 Análisis de los temas de los libros, según Goodrea
 #DATOS
 file1='s3://datos-riverside/clasificacion_libros_62022.xlsx'
 clasificacion=load_data(file1)
+print(clasificacion.columns)
 # usuario selecciona titulo
-titulos=(clasificacion['titulo_x'].unique())
+titulos=(clasificacion['titulo'].unique())
 libro_seleccion = st.selectbox("Seleccionar libro", titulos)
-xlibro=clasificacion.loc[clasificacion.titulo_x==libro_seleccion]
+xlibro=clasificacion.loc[clasificacion.titulo==libro_seleccion]
 xlibro=xlibro.sort_values(by='count', ascending=False)
 trace1 = go.Bar(
 y=xlibro['rating'], # NOC stands for National Olympic Committee
@@ -152,9 +153,11 @@ st.dataframe(xlibro)
 #---------------------------------------------------
 st.markdown('--------------------------------------')
 st.title('Libros similares')
-libros_similares=pd.read_excel('similar_books.xlsx')
-similares_eleccion=libros_similares.loc[libros_similares.titulo==libro_seleccion]
-st.dataframe(similares_eleccion[['similar_books_titulo', 'similar_books_isbn13']])
+libros_similares=pd.read_excel('similar_books_62022.xlsx')
+print(xlibro.iloc[0,2])
+isbn=xlibro.iloc[0,2]
+similares_eleccion=libros_similares.loc[libros_similares.isbn14==isbn]
+st.dataframe(similares_eleccion[[ 'similar_books_titulo', 'similar_books_isbn13', 'similar_books_link']])
 
 #---------------------------------------------------
 st.markdown('--------------------------------------')
@@ -162,7 +165,7 @@ st.title('Análisis palabras y libros de un mismo cluster')
 file2='s3://datos-riverside/clusters.xlsx'
 file3='s3://datos-riverside/catalogo_actualizado.csv'
 file4='s3://datos-riverside/listados_all.xlsx'
-#clusters=pd.read_excel(file2)
+clusters=pd.read_excel(file2)
 clusters=load_data(file2)
 #seleccion por clustering
 catalogo=load_csv(file3)
