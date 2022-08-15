@@ -71,6 +71,18 @@ st.markdown('')
 container = st.container()
 container.markdown('## 📙 Análisis de los temas de los libros, según Goodreads')
 
+st.set_page_config(layout="wide", page_title='Análisis clustering', page_icon="📙" )
+st.markdown('')
+container = st.container()
+container.markdown('## 📙 Análisis de los temas de los libros, según Goodreads')
+
+
+st.sidebar.text('')
+st.sidebar.text('')
+st.sidebar.text('')
+### SEASON RANGE ###
+st.sidebar.markdown("**Análisis de opiniones:** ⚡")
+
 #-------------------------------------------------------------------------------
 #DATOS
 file1='s3://datos-riverside/clasificacion_libros_62022.xlsx'
